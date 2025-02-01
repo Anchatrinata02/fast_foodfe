@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Register Page</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        margin: 0;
+      }
+      .register-container {
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        width: 350px;
+        text-align: center;
+      }
+      h2 {
+        margin-bottom: 20px;
+        color: #333;
+      }
+      input {
+        width: calc(100% - 20px);
+        padding: 12px;
+        margin: 10px 0;
+        border: 1px solid #ccc;
+        border-radius: 5px;
+        font-size: 16px;
+      }
+      button {
+        width: 100%;
+        padding: 12px;
+        background: #28a745;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 16px;
+        transition: background 0.3s;
+      }
+      button:hover {
+        background: #218838;
+      }
+      .login-link {
+        margin-top: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="register-container">
+      <h2>Register</h2>
+      <input type="text" id="fullname" placeholder="Full Name" />
+      <input type="email" id="email" placeholder="Email" />
+      <input type="text" id="phone" placeholder="Phone Number" />
+      <input type="text" id="username" placeholder="Username" />
+      <input type="password" id="password" placeholder="Password" />
+      <button onclick="register()">Register</button>
+      <p class="login-link">
+        Already have an account? <a href="login.html">Login here</a>
+      </p>
+    </div>
+    <script>
+      async function register() {
+        var fullname = document.getElementById("fullname").value;
+        var email = document.getElementById("email").value;
+        var phone = document.getElementById("phone").value;
+        var username = document.getElementById("username").value;
+        var password = document.getElementById("password").value;
+
+        if (fullname && email && phone && username && password) {
+          try {
+            const response = await fetch(
+              "https://fast-food-be.vercel.app/users/register",
+              {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                  nama: fullname,
+                  email: email,
+                  phone_number: phone,
+                  user_level: 2,
+                  username: username,
+                  password: password,
+                }),
+              }
+            );
+            const data = await response.json();
+            console.log("Response:", data);
+            alert("Registration successful! Redirecting to login...");
+            window.location.href = "login.html";
+          } catch (error) {
+            console.error("Error:", error);
+            alert("Failed to submit data.");
+          }
+        } else {
+          alert("Please fill all fields");
+        }
+      }
+    </script>
+  </body>
+</html>
