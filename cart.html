@@ -37,6 +37,8 @@
     <link rel="stylesheet" href="assets/css/main.css" />
     <!-- responsive -->
     <link rel="stylesheet" href="assets/css/responsive.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.5/js.cookie.min.js"></script>
   </head>
   <body>
     <!--PreLoader-->
@@ -135,47 +137,7 @@
                     <th class="product-quantity">Quantity</th>
                   </tr>
                 </thead>
-                <tbody>
-                  <tr class="table-body-row">
-                    <td class="product-remove">
-                      <a href="#"><i class="far fa-window-close"></i></a>
-                    </td>
-                    <td class="product-image">
-                      <img src="assets/img/products/burger-img-1.PNG" alt="" />
-                    </td>
-                    <td class="product-name">Burger</td>
-                    <td class="product-price">$4.99</td>
-                    <td class="product-quantity">
-                      <input type="number" placeholder="0" />
-                    </td>
-                  </tr>
-                  <tr class="table-body-row">
-                    <td class="product-remove">
-                      <a href="#"><i class="far fa-window-close"></i></a>
-                    </td>
-                    <td class="product-image">
-                      <img src="assets/img/products/fries-img-1.PNG" alt="" />
-                    </td>
-                    <td class="product-name">French Fries</td>
-                    <td class="product-price">$2.99</td>
-                    <td class="product-quantity">
-                      <input type="number" placeholder="0" />
-                    </td>
-                  </tr>
-                  <tr class="table-body-row">
-                    <td class="product-remove">
-                      <a href="#"><i class="far fa-window-close"></i></a>
-                    </td>
-                    <td class="product-image">
-                      <img src="assets/img/products/soda-img-1.PNG" alt="" />
-                    </td>
-                    <td class="product-name">Soda</td>
-                    <td class="product-price">$1.99</td>
-                    <td class="product-quantity">
-                      <input type="number" placeholder="0" />
-                    </td>
-                  </tr>
-                </tbody>
+                <tbody id="list-cart-item"></tbody>
               </table>
             </div>
           </div>
@@ -192,11 +154,7 @@
                 <tbody>
                   <tr class="total-data">
                     <td><strong>Subtotal: </strong></td>
-                    <td>$500</td>
-                  </tr>
-                  <tr class="total-data">
-                    <td><strong>Shipping: </strong></td>
-                    <td>$45</td>
+                    <td id="sub-total-quest"></td>
                   </tr>
                   <tr class="total-data">
                     <td><strong>Total: </strong></td>
@@ -309,5 +267,64 @@
     <script src="assets/js/sticker.js"></script>
     <!-- main js -->
     <script src="assets/js/main.js"></script>
+    <script>
+      const mappingImage = [
+        {
+          id: 1,
+          img: "assets/img/products/sosis-img-1.PNG",
+        },
+        ,
+        {
+          id: 2,
+          img: "assets/img/products/burger-img-1.PNG",
+        },
+        {
+          id: 3,
+          img: "assets/img/products/fries-img-1.PNG",
+        },
+        {
+          id: 4,
+          img: "assets/img/products/soda-img-1.PNG",
+        },
+        {
+          id: 5,
+          img: "assets/img/products/dbcb-img-1.PNG",
+        },
+      ];
+      function getCartFromCookies() {
+        return Cookies.get("cart") ? JSON.parse(Cookies.get("cart")) : [];
+      }
+      console.log(getCartFromCookies());
+      function formatToIDR(amount) {
+        return new Intl.NumberFormat("id-ID", {
+          style: "currency",
+          currency: "IDR",
+        }).format(amount);
+      }
+
+      const listDataCart = getCartFromCookies() || [];
+
+      $.each(getCartFromCookies() || [], (index, item) => {
+        $("#list-cart-item").append(`
+          <tr class="table-body-row">
+            <td class="product-remove">
+              <a href="#"><i class="far fa-window-close"></i></a>
+            </td>
+            <td class="product-image">
+              <img src="${
+                mappingImage?.find((el) => el?.id === item?.id)?.img || ""
+              }" alt="" />
+            </td>
+            <td class="product-name">${item.name}</td>
+            <td class="product-price">${formatToIDR(item?.price || 0)}</td>
+            <td class="product-quantity">
+              <input type="number" disabled placeholder="0" value="${
+                item?.quantity || 0
+              }" />
+            </td>
+          </tr>
+        `);
+      });
+    </script>
   </body>
 </html>

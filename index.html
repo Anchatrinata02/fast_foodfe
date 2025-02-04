@@ -389,6 +389,11 @@
       $(document).ready(async function () {
         const mappingImage = [
           {
+            id: 1,
+            img: "assets/img/products/sosis-img-1.PNG",
+          },
+          ,
+          {
             id: 2,
             img: "assets/img/products/burger-img-1.PNG",
           },
@@ -444,15 +449,9 @@
             }).format(amount);
           }
 
-          function getCartFromCookies() {
-            return Cookies.get("cart") ? JSON.parse(Cookies.get("cart")) : [];
-          }
-          console.log(getCartFromCookies());
-
           window.addToCart = (button) => {
             try {
               const newItem = $(button).data("menu");
-              console.log("Adding to cart:", newItem);
               let cart = Cookies.get("cart")
                 ? JSON.parse(Cookies.get("cart"))
                 : [];
@@ -468,8 +467,7 @@
                 expires: 1,
                 path: "/",
               });
-
-              console.log("Updated cart:", cart);
+              toastr.success(`Success add ${newItem.name}`);
             } catch (error) {
               console.error("Error saving to cookies:", error);
             }
@@ -482,7 +480,7 @@
                       <div class="product-image">
                           <a href="single-product.html">
                               <img src="${
-                                mappingImage?.find((el) => el.id === item?.id)
+                                mappingImage?.find((el) => el?.id === item?.id)
                                   ?.img || ""
                               }" alt=""/>
                           </a>
