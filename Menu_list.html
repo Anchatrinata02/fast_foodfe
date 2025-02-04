@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>List Menu</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-900 text-white flex justify-center items-center min-h-screen">
+    <div class="w-3/4 bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-center text-2xl font-bold mb-4">List Menu</h2>
+        <div class="flex justify-end mb-4">
+            <a href="create_menu.html" class="bg-yellow-500 text-black px-4 py-2 rounded">Create New Data</a>
+        </div>
+        <table class="w-full border-collapse">
+            <thead>
+                <tr class="bg-gray-700">
+                    <th class="p-2">Images</th>
+                    <th class="p-2">Name</th>
+                    <th class="p-2">Description</th>
+                    <th class="p-2">Price</th>
+                    <th class="p-2">Quantity</th>
+                    <th class="p-2">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="border-b border-gray-600">
+                    <td class="p-2"><img src="pizza.png" alt="Pizza" class="w-10 h-10 rounded"></td>
+                    <td class="p-2">Pizza Margherita Medium</td>
+                    <td class="p-2">Classic Italian pizza with mozzarella and tomato sauce</td>
+                    <td class="p-2">Rp 120.000</td>
+                    <td class="p-2">2</td>
+                    <td class="p-2">
+                        <a href="edit_menu.html" class="text-blue-400 mr-2">✏️</a>
+                        <button class="text-red-400" onclick="confirmDelete()">🗑️</button>
+                    </td>
+                </tr>
+                <tr class="border-b border-gray-600">
+                    <td class="p-2"><img src="thai-tea.png" alt="Thai Tea" class="w-10 h-10 rounded"></td>
+                    <td class="p-2">Thai Tea</td>
+                    <td class="p-2">Classic Thai Tea with tea and milk</td>
+                    <td class="p-2">Rp 18.000</td>
+                    <td class="p-2">10</td>
+                    <td class="p-2">
+                        <a href="edit_menu.html" class="text-blue-400 mr-2">✏️</a>
+                        <button class="text-red-400" onclick="confirmDelete()">🗑️</button>
+                    </td>
+                </tr>
+                <tr class="border-b border-gray-600">
+                    <td class="p-2"><img src="mapo-tofu.png" alt="Mapo Tofu" class="w-10 h-10 rounded"></td>
+                    <td class="p-2">Sichuan-style Mapo Tofu</td>
+                    <td class="p-2">Spicy and hot Mapo Tofu</td>
+                    <td class="p-2">Rp 70.000</td>
+                    <td class="p-2">10</td>
+                    <td class="p-2">
+                        <a href="edit_menu.html" class="text-blue-400 mr-2">✏️</a>
+                        <button class="text-red-400" onclick="confirmDelete()">🗑️</button>
+                    </td>
+                </tr>
+                <tr class="border-b border-gray-600">
+                    <td class="p-2"><img src="ramen.png" alt="Ramen" class="w-10 h-10 rounded"></td>
+                    <td class="p-2">Hot Spicy Ramen</td>
+                    <td class="p-2">Spicy ramen with rich broth</td>
+                    <td class="p-2">Rp 50.000</td>
+                    <td class="p-2">10</td>
+                    <td class="p-2">
+                        <a href="edit_menu.html" class="text-blue-400 mr-2">✏️</a>
+                        <button class="text-red-400" onclick="confirmDelete()">🗑️</button>
+                    </td>
+                </tr>
+                <tr class="border-b border-gray-600">
+                    <td class="p-2"><img src="tuna-sandwich.png" alt="Tuna Sandwich" class="w-10 h-10 rounded"></td>
+                    <td class="p-2">Tuna Sandwich</td>
+                    <td class="p-2">Tuna mayo sandwich with fresh ingredients</td>
+                    <td class="p-2">Rp 65.000</td>
+                    <td class="p-2">12</td>
+                    <td class="p-2">
+                        <a href="edit_menu.html" class="text-blue-400 mr-2">✏️</a>
+                        <button class="text-red-400" onclick="confirmDelete()">🗑️</button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+    <script>
+        function confirmDelete() {
+            if (confirm("Apa Anda yakin ingin menghapus menu?")) {
+                alert("Menu berhasil dihapus!");
+            }
+        }
+    </script>
+</body>
+</html>
