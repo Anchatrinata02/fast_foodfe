@@ -37,6 +37,12 @@
     <!-- responsive -->
     <link rel="stylesheet" href="assets/css/responsive.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/js-cookie/3.0.5/js.cookie.min.js"></script>
   </head>
   <body>
     <!--PreLoader-->
@@ -179,50 +185,7 @@
           </div>
         </div>
 
-        <div class="row">
-          <div class="col-lg-4 col-md-6 text-center">
-            <div class="single-product-item">
-              <div class="product-image">
-                <a href="single-product.html"
-                  ><img src="assets/img/products/burger-img-1.PNG" alt=""
-                /></a>
-              </div>
-              <h3>Burger</h3>
-              <p class="product-price"><span>Per Pc</span> 4.99$</p>
-              <a href="cart.html" class="cart-btn"
-                ><i class="fas fa-shopping-cart"></i> Add to Cart</a
-              >
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-6 text-center">
-            <div class="single-product-item">
-              <div class="product-image">
-                <a href="single-product.html"
-                  ><img src="assets/img/products/fries-img-1.PNG" alt=""
-                /></a>
-              </div>
-              <h3>French Fries</h3>
-              <p class="product-price"><span>Per Portion</span> 2.99$</p>
-              <a href="cart.html" class="cart-btn"
-                ><i class="fas fa-shopping-cart"></i> Add to Cart</a
-              >
-            </div>
-          </div>
-          <div class="col-lg-4 col-md-6 offset-md-3 offset-lg-0 text-center">
-            <div class="single-product-item">
-              <div class="product-image">
-                <a href="single-product.html"
-                  ><img src="assets/img/products/soda-img-1.PNG" alt=""
-                /></a>
-              </div>
-              <h3>Soda</h3>
-              <p class="product-price"><span>Per Cup</span> 1.99$</p>
-              <a href="cart.html" class="cart-btn"
-                ><i class="fas fa-shopping-cart"></i> Add to Cart</a
-              >
-            </div>
-          </div>
-        </div>
+        <div class="row" id="list-menu-items"></div>
       </div>
     </div>
     <!-- end product section -->
@@ -418,15 +381,32 @@
       </div>
     </div>
     <!-- end footer -->
-
     <script>
       const handleLogout = () => {
         sessionStorage.removeItem("auth");
         window.location.reload();
       };
       $(document).ready(async function () {
+        const mappingImage = [
+          {
+            id: 2,
+            img: "assets/img/products/burger-img-1.PNG",
+          },
+          {
+            id: 3,
+            img: "assets/img/products/fries-img-1.PNG",
+          },
+          {
+            id: 4,
+            img: "assets/img/products/soda-img-1.PNG",
+          },
+          {
+            id: 5,
+            img: "assets/img/products/dbcb-img-1.PNG",
+          },
+        ];
+
         const dataLogin = JSON.parse(sessionStorage.getItem("auth"));
-        // Check if data exists and display it
         if (dataLogin) {
           $("#displayName").text(dataLogin.user.nama);
           $("#protectedAuth").hide();
@@ -439,13 +419,93 @@
             "https://fast-food-be.vercel.app/master-menu/menu",
             {
               method: "GET",
-              headers: {
-                "Content-Type": "application/json",
-              },
+              headers: { "Content-Type": "application/json" },
             }
           );
-          console.log(await response.json());
-        } catch (error) {}
+
+          if (!response.ok) {
+            throw new Error(`HTTP error! Status: ${response.status}`);
+          }
+
+          const dataMenuRes = await response.json();
+          $("#list-menu-items").empty();
+
+          toastr.options = {
+            closeButton: true,
+            progressBar: true,
+            positionClass: "toast-top-right",
+            timeOut: "3000",
+          };
+
+          function formatToIDR(amount) {
+            return new Intl.NumberFormat("id-ID", {
+              style: "currency",
+              currency: "IDR",
+            }).format(amount);
+          }
+
+          function getCartFromCookies() {
+            return Cookies.get("cart") ? JSON.parse(Cookies.get("cart")) : [];
+          }
+          console.log(getCartFromCookies());
+
+          window.addToCart = (button) => {
+            try {
+              const newItem = $(button).data("menu");
+              console.log("Adding to cart:", newItem);
+              let cart = Cookies.get("cart")
+                ? JSON.parse(Cookies.get("cart"))
+                : [];
+
+              const existingItem = cart.find((item) => item.id === newItem.id);
+              if (existingItem) {
+                existingItem.quantity = (existingItem.quantity || 1) + 1;
+              } else {
+                newItem.quantity = 1;
+                cart.push(newItem);
+              }
+              Cookies.set("cart", JSON.stringify(cart), {
+                expires: 1,
+                path: "/",
+              });
+
+              console.log("Updated cart:", cart);
+            } catch (error) {
+              console.error("Error saving to cookies:", error);
+            }
+          };
+
+          $.each(dataMenuRes, function (index, item) {
+            $("#list-menu-items").append(`
+              <div class="col-lg-4 col-md-6 text-center">
+                  <div class="single-product-item">
+                      <div class="product-image">
+                          <a href="single-product.html">
+                              <img src="${
+                                mappingImage?.find((el) => el.id === item?.id)
+                                  ?.img || ""
+                              }" alt=""/>
+                          </a>
+                      </div>
+                      <h3>${item?.name || "not found"}</h3>
+                      <p class="product-price"><span>${
+                        item?.description
+                      }</span> ${formatToIDR(item?.price || 0)}</p>
+                      <a class="cart-btn" data-menu='${JSON.stringify(
+                        item
+                      )}' onclick="addToCart(this)">
+                          <i class="fas fa-shopping-cart"></i> Add to Cart
+                      </a>
+                  </div>
+              </div>
+          `);
+          });
+        } catch (error) {
+          console.error("Error fetching menu:", error);
+          $("#list-menu-items").html(
+            '<li style="color: red;">Failed to load menu.</li>'
+          );
+        }
       });
     </script>
     <!-- jquery -->
