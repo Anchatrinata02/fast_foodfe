@@ -123,52 +123,7 @@
     <!-- check out section -->
     <div class="checkout-section mt-150 mb-150">
       <div class="container">
-        <div class="row">
-          <div class="col-lg-4">
-            <div class="order-details-wrap">
-              <table class="order-details">
-                <thead>
-                  <tr>
-                    <th>Your order Details</th>
-                    <th>Price</th>
-                  </tr>
-                </thead>
-                <tbody class="order-details-body">
-                  <tr>
-                    <td>Product</td>
-                    <td>Total</td>
-                  </tr>
-                  <tr>
-                    <td>Strawberry</td>
-                    <td>$85.00</td>
-                  </tr>
-                  <tr>
-                    <td>Berry</td>
-                    <td>$70.00</td>
-                  </tr>
-                  <tr>
-                    <td>Lemon</td>
-                    <td>$35.00</td>
-                  </tr>
-                </tbody>
-                <tbody class="checkout-details">
-                  <tr>
-                    <td>Subtotal</td>
-                    <td>$190</td>
-                  </tr>
-                  <tr>
-                    <td>Shipping</td>
-                    <td>$50</td>
-                  </tr>
-                  <tr>
-                    <td>Total</td>
-                    <td>$240</td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
+        <div class="row" id="list-order"></div>
       </div>
     </div>
     <!-- end check out section -->
@@ -231,12 +186,20 @@
     <!-- end footer -->
 
     <script>
-      $(document).ready(function () {
-        const handleLogout = () => {
-          sessionStorage.removeItem("auth");
-          window.location.reload();
-        };
-        $(document).ready(function () {
+      const handleLogout = () => {
+        sessionStorage.removeItem("auth");
+        window.location.reload();
+      };
+
+      $(document).ready(async function () {
+        function formatToIDR(amount) {
+          return new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+          }).format(amount);
+        }
+
+        try {
           const dataLogin = JSON.parse(sessionStorage.getItem("auth"));
           if (dataLogin) {
             $("#displayName").text(dataLogin.user.nama);
@@ -244,7 +207,81 @@
           } else {
             $("#logoutButton").hide();
           }
-        });
+          if (dataLogin) {
+            const response = await fetch(
+              `https://fast-food-be.vercel.app/order/bookingorder?user_id=${dataLogin.user.id}`,
+              {
+                method: "GET",
+                headers: { "Content-Type": "application/json" },
+              }
+            );
+
+            const orders = await response.json();
+            $.each(orders || [], async function (index, order) {
+              const orderDetailResponse = await fetch(
+                `https://fast-food-be.vercel.app/detail/order_detail?order_id=${order.id}`,
+                {
+                  method: "GET",
+                  headers: { "Content-Type": "application/json" },
+                }
+              );
+
+              const orderDetails = await orderDetailResponse.json();
+
+              let orderItemsHTML = "";
+              let subtotal = 0;
+
+              // Loop through products in the order
+              $.each(orderDetails || [], function (i, item) {
+                const totalPrice = item.menu_price * item.quantity;
+                subtotal += totalPrice;
+
+                orderItemsHTML += `
+                    <tr>
+                        <td>${item.menu_name} (x${item.quantity})</td>
+                        <td>${formatToIDR(totalPrice)}</td>
+                    </tr>
+                `;
+              });
+
+              const totalPrice = subtotal;
+
+              $("#list-order").append(`
+                  <div class="col-lg-4" style="margin-bottom: 24px;">
+                      <div class="order-details-wrap">
+                          <table class="order-details">
+                              <thead>
+                                  <tr>
+                                      <th>Order <span style="color: blue; font-weight: 600;">${
+                                        order?.order_number
+                                      }</span></th>
+                                      <th>Price</th>
+                                  </tr>
+                              </thead>
+                              <tbody class="order-details-body">
+                                  <tr>
+                                      <td>Product</td>
+                                      <td>Total</td>
+                                  </tr>
+                                  ${orderItemsHTML}
+                              </tbody>
+                              <tbody class="checkout-details">
+                                  <tr>
+                                      <td>Total</td>
+                                      <td><strong>${formatToIDR(
+                                        subtotal
+                                      )}</strong></td>
+                                  </tr>
+                              </tbody>
+                          </table>
+                      </div>
+                  </div>
+              `);
+            });
+          }
+        } catch (error) {
+          console.error("Error fetching booking orders:", error);
+        }
       });
     </script>
 
