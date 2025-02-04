@@ -9,10 +9,8 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css"
     />
     <!-- title -->
-    <title>Fruitkha</title>
+    <title>Burgerkha</title>
 
-    <!-- favicon -->
-    <link rel="shortcut icon" type="image/png" href="assets/img/favicon.png" />
     <!-- google font -->
     <link
       href="https://fonts.googleapis.com/css?family=Open+Sans:300,400,700"
@@ -117,7 +115,6 @@
                 <h1>Delicious Fast Food</h1>
                 <div class="hero-btns">
                   <a href="shop.html" class="boxed-btn">Food Collection</a>
-                  <a href="contact.html" class="bordered-btn">Contact Us</a>
                 </div>
               </div>
             </div>
@@ -178,10 +175,6 @@
           <div class="col-lg-8 offset-lg-2 text-center">
             <div class="section-title">
               <h3><span class="orange-text">Our</span> Products</h3>
-              <p>
-                Lorem ipsum dolor sit amet, consectetur adipisicing elit.
-                Aliquid, fuga quas itaque eveniet beatae optio.
-              </p>
             </div>
           </div>
         </div>
@@ -421,18 +414,6 @@
               </ul>
             </div>
           </div>
-          <div class="col-lg-3 col-md-6">
-            <div class="footer-box subscribe">
-              <h2 class="widget-title">Subscribe</h2>
-              <p>Subscribe to our mailing list to get the latest updates.</p>
-              <form action="index.html">
-                <input type="email" placeholder="Email" />
-                <button type="submit">
-                  <i class="fas fa-paper-plane"></i>
-                </button>
-              </form>
-            </div>
-          </div>
         </div>
       </div>
     </div>
@@ -443,7 +424,7 @@
         sessionStorage.removeItem("auth");
         window.location.reload();
       };
-      $(document).ready(function () {
+      $(document).ready(async function () {
         const dataLogin = JSON.parse(sessionStorage.getItem("auth"));
         // Check if data exists and display it
         if (dataLogin) {
@@ -452,6 +433,19 @@
         } else {
           $("#logoutButton").hide();
         }
+
+        try {
+          const response = await fetch(
+            "https://fast-food-be.vercel.app/master-menu/menu",
+            {
+              method: "GET",
+              headers: {
+                "Content-Type": "application/json",
+              },
+            }
+          );
+          console.log(await response.json());
+        } catch (error) {}
       });
     </script>
     <!-- jquery -->
@@ -474,5 +468,6 @@
     <script src="assets/js/sticker.js"></script>
     <!-- main js -->
     <script src="assets/js/main.js"></script>
+    <script></script>
   </body>
 </html>

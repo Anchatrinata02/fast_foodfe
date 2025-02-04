@@ -11,7 +11,10 @@
         justify-content: center;
         align-items: center;
         height: 100vh;
-        background: linear-gradient(135deg, #667eea, #764ba2);
+        background-image: url(assets/img/hero-bg.jpg);
+        background-size: cover;
+        background-position: center;
+        background-attachment: fixed;
         margin: 0;
       }
       .login-container {
@@ -98,7 +101,7 @@
             const data = await response.json();
 
             if (response.ok) {
-              sessionStorage.setItem("auth", JSON.stringify(data))
+              sessionStorage.setItem("auth", JSON.stringify(data));
               console.log("Response:", data);
               alert("Login successful! Redirecting to index...");
               window.location.href = "index.html";

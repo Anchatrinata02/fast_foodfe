@@ -2107,7 +2107,12 @@ a.video-play-btn {
   background-color: #f5f5f5;
   background-image: url(../img/1.jpg);
   background-size: cover;
-  padding: 110px 0px 115px;
+}
+
+.shop-banner .container{
+  background-color: #0f0f0f5d;
+  padding: 110px 300px 115px;
+  max-width: 100% !important;
 }
 
 .shop-banner h3 {
@@ -2115,6 +2120,7 @@ a.video-play-btn {
   font-size: 50px;
   line-height: 1.2em;
   margin-bottom: 0px;
+  color: #f7f4f4;;
 }
 
 .shop-banner .sale-percent {
@@ -2128,7 +2134,7 @@ a.video-play-btn {
   position: relative;
   font-size: 24px;
   line-height: 1.1em;
-  color: #051922;
+  color: #e2e7e9;
   font-weight: 400;
   text-align: center;
   margin-right: 10px;
