@@ -60,6 +60,12 @@
         margin-top: 10px;
       }
     </style>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/toastr.js/latest/toastr.min.js"></script>
   </head>
   <body>
     <div class="login-container">
@@ -79,7 +85,13 @@
         var password = document.getElementById("password").value;
         var errorMessage = document.getElementById("error-message");
 
-        // Hide error message initially
+        toastr.options = {
+          closeButton: true,
+          progressBar: true,
+          positionClass: "toast-top-right",
+          timeOut: "3000",
+        };
+
         errorMessage.style.display = "none";
 
         if (email && password) {
@@ -88,13 +100,8 @@
               "https://fast-food-be.vercel.app/users/login",
               {
                 method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                },
-                body: JSON.stringify({
-                  email: email, // Fix: Use username as email or update API accordingly
-                  password: password,
-                }),
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: email, password: password }),
               }
             );
 
@@ -103,8 +110,15 @@
             if (response.ok) {
               sessionStorage.setItem("auth", JSON.stringify(data));
               console.log("Response:", data);
-              alert("Login successful! Redirecting to index...");
-              window.location.href = "index.html";
+              toastr.success("Login successful! Redirecting...");
+
+              setTimeout(() => {
+                if (data?.user?.user_level === 1) {
+                  window.location.href = "menu_list.html";
+                } else {
+                  window.location.href = "index.html";
+                }
+              }, 1000);
             } else {
               errorMessage.style.display = "block";
               errorMessage.textContent = data.message || "Invalid credentials";
@@ -118,6 +132,9 @@
           errorMessage.textContent = "Please enter both username and password.";
         }
       }
+      $(document).ready(async function () {
+        console.log("Document ready!");
+      });
     </script>
   </body>
 </html>
