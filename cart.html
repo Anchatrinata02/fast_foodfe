@@ -153,17 +153,12 @@
                 </thead>
                 <tbody>
                   <tr class="total-data">
-                    <td><strong>Subtotal: </strong></td>
-                    <td id="sub-total-quest"></td>
-                  </tr>
-                  <tr class="total-data">
                     <td><strong>Total: </strong></td>
-                    <td>$545</td>
+                    <td id="sub-total-quest"></td>
                   </tr>
                 </tbody>
               </table>
               <div class="cart-buttons">
-                <a href="cart.html" class="boxed-btn">Update Cart</a>
                 <a href="checkout.html" class="boxed-btn black">Check Out</a>
               </div>
             </div>
@@ -294,7 +289,6 @@
       function getCartFromCookies() {
         return Cookies.get("cart") ? JSON.parse(Cookies.get("cart")) : [];
       }
-      console.log(getCartFromCookies());
       function formatToIDR(amount) {
         return new Intl.NumberFormat("id-ID", {
           style: "currency",
@@ -302,29 +296,73 @@
         }).format(amount);
       }
 
-      const listDataCart = getCartFromCookies() || [];
+      let listDataCart = getCartFromCookies() || [];
+      function calculateTotal(cart) {
+        return cart.reduce(
+          (total, item) => total + item.price * item.quantity,
+          0
+        );
+      }
+      const totalPrice = calculateTotal(listDataCart);
+      $("#sub-total-quest").append(formatToIDR(totalPrice));
 
-      $.each(getCartFromCookies() || [], (index, item) => {
-        $("#list-cart-item").append(`
-          <tr class="table-body-row">
-            <td class="product-remove">
-              <a href="#"><i class="far fa-window-close"></i></a>
-            </td>
-            <td class="product-image">
-              <img src="${
-                mappingImage?.find((el) => el?.id === item?.id)?.img || ""
-              }" alt="" />
-            </td>
-            <td class="product-name">${item.name}</td>
-            <td class="product-price">${formatToIDR(item?.price || 0)}</td>
-            <td class="product-quantity">
-              <input type="number" disabled placeholder="0" value="${
-                item?.quantity || 0
-              }" />
-            </td>
-          </tr>
+      window.removeFromCart = (button) => {
+        try {
+          const newItem = $(button).data("menu");
+          listDataCart = listDataCart?.filter((el) => el?.id !== newItem.id);
+          Cookies.set("cart", JSON.stringify(listDataCart), {
+            expires: 1,
+            path: "/",
+          });
+          $(button).closest("tr").remove();
+          $("#sub-total-quest").text(formatToIDR(calculateTotal(listDataCart)));
+          if (listDataCart.length === 0) {
+            $("#list-cart-item").html(`
+                <tr>
+                    <td colspan="5" class="text-center">Your cart is empty 🛒</td>
+                </tr>
+            `);
+          }
+
+          console.log("Item removed. Updated cart:", listDataCart);
+        } catch (error) {
+          console.error("Error removing item:", error);
+        }
+      };
+
+      if (listDataCart.length === 0) {
+        $("#list-cart-item").html(`
+        <tr>
+            <td colspan="5" class="text-center">Your cart is empty 🛒</td>
+        </tr>
+    `);
+      } else {
+        $.each(listDataCart, (index, item) => {
+          $("#list-cart-item").append(`
+            <tr class="table-body-row">
+                <td class="product-remove">
+                    <a data-menu='${JSON.stringify(
+                      item
+                    )}' onclick="removeFromCart(this)">
+                        <i class="far fa-window-close"></i>
+                    </a>
+                </td>
+                <td class="product-image">
+                    <img src="${
+                      mappingImage?.find((el) => el?.id === item?.id)?.img || ""
+                    }" alt="" />
+                </td>
+                <td class="product-name">${item.name}</td>
+                <td class="product-price">${formatToIDR(item?.price || 0)}</td>
+                <td class="product-quantity">
+                    <input type="number" disabled placeholder="0" value="${
+                      item?.quantity || 0
+                    }" />
+                </td>
+            </tr>
         `);
-      });
+        });
+      }
     </script>
   </body>
 </html>
