@@ -231,19 +231,20 @@
     <!-- end footer -->
 
     <script>
-      const handleLogout = () => {
-        sessionStorage.removeItem("auth");
-        window.location.reload();
-      };
       $(document).ready(function () {
-        const dataLogin = JSON.parse(sessionStorage.getItem("auth"));
-        // Check if data exists and display it
-        if (dataLogin) {
-          $("#displayName").text(dataLogin.user.nama);
-          $("#protectedAuth").hide();
-        } else {
-          $("#logoutButton").hide();
-        }
+        const handleLogout = () => {
+          sessionStorage.removeItem("auth");
+          window.location.reload();
+        };
+        $(document).ready(function () {
+          const dataLogin = JSON.parse(sessionStorage.getItem("auth"));
+          if (dataLogin) {
+            $("#displayName").text(dataLogin.user.nama);
+            $("#protectedAuth").hide();
+          } else {
+            $("#logoutButton").hide();
+          }
+        });
       });
     </script>
 
